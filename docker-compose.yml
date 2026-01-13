@@ -1,0 +1,13 @@
+services:
+  agent:
+    build: .
+    container_name: autostream_agent
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

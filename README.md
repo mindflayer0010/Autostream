@@ -22,7 +22,14 @@ An AI-powered platform that converts social media conversations into qualified b
    ```
 
 ### Running the Agent
-**CLI Demo (Interactive Terminal)**:
+
+**Using Docker (Recommended)**:
+```bash
+docker-compose up --build
+```
+This will start the API at http://localhost:8000.
+
+**Manual Setup**:
 ```bash
 python -m app.cli
 ```
