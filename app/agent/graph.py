@@ -25,6 +25,12 @@ def build_agent(kb_path: str, model: str = "gpt-4o-mini"):
 
     def classify_node(d: Dict[str, Any]) -> Dict[str, Any]:
         s = AgentState.from_dict(d)
+        
+        # FIX: If we are already in a high-intent flow (collecting details) 
+        # but haven't captured the lead yet, DO NOT re-classify. Stay in sales.
+        if s.intent == "high_intent_lead" and not s.lead_captured:
+            return s.to_dict()
+
         user_text = _latest_user_text(s)
         s.intent = classify_intent(llm, user_text)
         return s.to_dict()
@@ -49,12 +55,15 @@ def build_agent(kb_path: str, model: str = "gpt-4o-mini"):
         s.last_rag_context = context
 
         prompt = (
-            "You are AutoStream's product assistant.\n"
-            "Answer ONLY using the provided context.\n"
-            "If the context does not contain the answer, say: \"I don't know based on the current info.\" \n\n"
+            "You are AutoStream's friendly and helpful product assistant.\n"
+            "Answer the user's question using the provided context.\n"
+            "If the context doesn't have the info, say you don't know.\n\n"
             f"Context:\n{context}\n\n"
             f"User question: {user_text}\n\n"
-            "Write a short, accurate answer in 2–6 sentences."
+            "Formatting:\n"
+            "- Synthesize the info into a natural, engaging explanation (don't just copy-paste lists).\n"
+            "- Use paragraphs to explain value, but you can use small bullet points for key specs if needed.\n"
+            "- Sound like a helpful human expert, not a documentation bot."
         )
         answer = llm.invoke([HumanMessage(content=prompt)]).content
         s.messages.append(AIMessage(content=answer))
