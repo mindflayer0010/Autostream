@@ -18,6 +18,7 @@ An AI-powered platform that converts social media conversations into qualified b
    Create a `.env` file with your keys:
    ```
    OPENAI_API_KEY=sk-...
+   # (CAN'T REVEAL API KEY FOR SAFETY REASONS, AS IT'S PRIVATE)
    MODEL_NAME=gpt-4o-mini
    ```
 
